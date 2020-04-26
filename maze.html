@@ -7,7 +7,7 @@
             <h3>Finish</h3>
         </td>
         <td>
-            <canvas id="mazeCanvas" style="width:400px;height:300px;border:1px solid #000"></canvas>
+            <canvas id="mazeCanvas" style="margin-left:50px;width:400px;height:300px;border:1px solid #000"></canvas>
         </td>
     </tr>
 </table>
@@ -22,11 +22,21 @@
     var c = document.getElementById("mazeCanvas");
     var ctx = c.getContext("2d");
     ctx.beginPath();
-    ctx.moveTo(100, 120);
+    ctx.moveTo(position.x, position.y);
 
     move(4);
     turn("left");
-    move(4);
+    move(3);
+    turn("right");
+    move(2);
+    turn("right");
+    move(2);
+    turn("right");
+    move(1);
+    turn("left");
+    move(2);
+    turn("left");
+    move(5);
 
     ctx.stroke();
 
