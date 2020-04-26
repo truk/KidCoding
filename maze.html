@@ -16,7 +16,8 @@
 
 <script>
     var position = { x: 100, y: 120 };
-    var direction = { x: 0, y: -1 };
+    var direction = [{ x: 0, y: -1 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 0 }];
+    var directionIndex = 0;
 
     var c = document.getElementById("mazeCanvas");
     var ctx = c.getContext("2d");
@@ -24,12 +25,20 @@
     ctx.moveTo(100, 120);
 
     move(4);
+    turn("left");
+    move(4);
 
     ctx.stroke();
 
+    function turn(direction) {
+        directionIndex = direction === "left" ?
+            (directionIndex + 1) % 4
+            : (directionIndex + 3) % 4;
+    }
+
     function move(units) {
-        position.x += direction.x * 10 * units;
-        position.y += direction.y * 10 * units;
+        position.x += direction[directionIndex].x * 10 * units;
+        position.y += direction[directionIndex].y * 10 * units;
         ctx.lineTo(position.x, position.y);
     }
 
