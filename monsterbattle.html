@@ -1,0 +1,116 @@
+<html>
+
+<table style="width:100%">
+    <tr>
+        <td id="me">
+            <h1>My Monster</h1>
+        </td>
+        <td>
+            <ul id="messages"></ul>
+        </td>
+        <td id="you">
+            <h1>Your Monster</h1>
+        </td>
+    </tr>
+    <tr>
+        <td id="myStats"></td>
+        <td id="controls">
+            <button id="battle">Battle</button>
+            <button id="attack">Attack</button>
+        </td>
+        <td id="yourStats"></td>
+    </tr>
+</table>
+
+<script>
+    var myMonster = { level: 1, life: 50, attack: 20 };
+
+    var messages = document.getElementById('messages');
+    var me = document.getElementById('me');
+    var you = document.getElementById('you');
+
+    var myStatArea = document.getElementById('myStats');
+    var yourStatArea = document.getElementById('yourStats');
+
+    var battleButton = document.getElementById('battle');
+    var attackButton = document.getElementById('attack');
+
+    attackButton.style.display = 'none';
+
+    var myStats = Object.assign({}, myMonster);
+    var opponentStats = {};
+
+    function battle() {
+        opponentStats = Object.assign({}, myMonster);
+        updateStats();
+        clearMessages();
+
+        attackButton.style.display = 'block';
+        battleButton.style.display = 'none';
+    }
+
+    function attack() {
+        var attack = myStats.attack;
+        displayMessage("You attack for " + attack + " points");
+        opponentStats.life -= attack;
+
+        if (opponentStats.life <= 0) {
+            finishBattle(true);
+        } else {
+            attack = opponentStats.attack;
+            myStats.life -= attack;
+
+            displayMessage("Your opponent attacks for " + attack + " points");
+            if (myStats.life <= 0) {
+                finishBattle(false);
+            }
+        }
+
+        updateStats();
+    }
+
+    function finishBattle(win) {
+        if (win) {
+            levelUp();
+            displayMessage("You Won! Your level is now " + myMonster.level);
+        } else {
+            displayMessage("Oh no.  You lost!  No level up this time.");
+        }
+        myStats = Object.assign({}, myMonster);
+
+        battleButton.style.display = 'block';
+        attackButton.style.display = 'none';
+    }
+
+    function levelUp() {
+        myMonster.level++;
+        myMonster.life += 50;
+        myMonster.attack += 20;
+    }
+
+    function displayMessage(message) {
+        var li = document.createElement("LI");
+        li.appendChild(document.createTextNode(message));
+        messages.appendChild(li);
+    }
+
+    function clearMessages() {
+        messages.innerHTML = "";
+    }
+
+    function updateStats() {
+        myStatArea.innerHTML = JSON.stringify(myStats);
+        yourStatArea.innerHTML = JSON.stringify(opponentStats);
+    }
+
+    battleButton.onclick = function () {
+        battle();
+    }
+
+    attackButton.onclick = function () {
+        attack();
+    }
+
+</script>
+
+</html>
