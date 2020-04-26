@@ -31,15 +31,23 @@
     ctx.stroke();
 
     function turn(direction) {
+        addCommand("Turn " + direction + " 90 degrees");
         directionIndex = direction === "left" ?
             (directionIndex + 1) % 4
             : (directionIndex + 3) % 4;
     }
 
     function move(units) {
+        addCommand("Go forward " + units + " units");
         position.x += direction[directionIndex].x * 10 * units;
         position.y += direction[directionIndex].y * 10 * units;
         ctx.lineTo(position.x, position.y);
+    }
+
+    function addCommand(text) {
+        var li = document.createElement("LI");
+        li.appendChild(document.createTextNode(text));
+        commands.appendChild(li);
     }
 
 </script>
