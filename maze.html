@@ -15,12 +15,24 @@
 <img src="maze.jpg" />
 
 <script>
+    var position = { x: 100, y: 120 };
+    var direction = { x: 0, y: -1 };
+
     var c = document.getElementById("mazeCanvas");
     var ctx = c.getContext("2d");
     ctx.beginPath();
     ctx.moveTo(100, 120);
-    ctx.lineTo(100, 80);
+
+    move(4);
+
     ctx.stroke();
+
+    function move(units) {
+        position.x += direction.x * 10 * units;
+        position.y += direction.y * 10 * units;
+        ctx.lineTo(position.x, position.y);
+    }
+
 </script>
 
 </html>
