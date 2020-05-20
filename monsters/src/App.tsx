@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Battle } from './components/Battle/Battle';
 import { SkillType, MonsterModel } from './types';
 import { Messages } from './components/Messages/Messages';
+import Grid from '@material-ui/core/Grid';
+import './App.css';
 
 function App() {
 
@@ -49,12 +51,19 @@ function App() {
     }
 
     return (
-        <div>
-            {isFighting ?
-                <Battle attacker={myMonster} defender={opponentMonster} complete={BattleComplete} addMessage={addMessage} />
-                :
-                <button onClick={startBattle}>Start Battle</button>}
-            <Messages messages={messages} />
+        <div className="root">
+            <Grid container spacing={3}>
+                <Grid item xs={10}>
+                    {isFighting ?
+                        <Battle attacker={myMonster} defender={opponentMonster} complete={BattleComplete} addMessage={addMessage} />
+                        :
+                        <button onClick={startBattle}>Start Battle</button>}
+                </Grid>
+                <Grid item xs={2}>
+                    <Messages messages={messages} />
+                </Grid>
+            </Grid>
+
         </div>
     );
 }

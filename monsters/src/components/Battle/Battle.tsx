@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Actions } from './Actions';
 import { Monster } from '../Monster/Monster';
 import { MonsterModel } from '../../types';
+import Grid from '@material-ui/core/Grid';
+import '../../App.css';
 
 export interface BattleProps {
     attacker: MonsterModel;
@@ -38,12 +40,12 @@ export function Battle({ attacker, defender, complete, addMessage }: BattleProps
     }
 
     return (
-        <div>
-            <table><tbody><tr>
-                <td><h1>Me</h1><Monster monster={myMonster} /></td>
-                <td><Actions attack={Attack} /></td>
-                <td><h1>Opponent</h1><Monster monster={yourMonster} /></td>
-            </tr></tbody></table>
+        <div className="root">
+            <Grid container spacing={3}>
+                <Grid item xs={4}><h1>Me</h1><Monster monster={myMonster} /></Grid>
+                <Grid item xs={4}><Actions attack={Attack} /></Grid>
+                <Grid item xs={4}><h1>Opponent</h1><Monster monster={yourMonster} /></Grid>
+            </Grid>
         </div>
     )
 }
