@@ -1,6 +1,6 @@
 ## Monsters in React
 
-This project is slowly build up a monster game in React
+This project is to slowly build up a monster game in React
 
 It starts with a very minimal project and adds features incrementally
 
