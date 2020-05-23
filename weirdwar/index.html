@@ -1,0 +1,187 @@
+<html>
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    td {
+        width: 33%;
+        padding: 20px;
+        border: 1px solid #666;
+        text-align: center;
+        font: 12px tahoma;
+    }
+
+    p {
+        line-height: 3px;
+    }
+
+    .faceUp {
+        font-weight: bold;
+    }
+
+    .faceDown {
+        color: #999;
+    }
+</style>
+
+<body>
+    <table>
+        <thead>
+            <tr>
+                <td><button id="playButton" onclick="play()">Play</button>
+                <td colspan="2" id="message">
+            </tr>
+        </thead>
+        <tbody id="board">
+        </tbody>
+    </table>
+</body>
+
+<script>
+
+    const suits = ['hearts', 'clubs', 'spades', 'diamonds'];
+    const names = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
+
+    const board = document.getElementById('board');
+    const message = document.getElementById('message');
+
+    const numPlayers = 10;
+
+    let player = [];
+    let deck = [];
+    let pot = [];
+    let hands = 0;
+
+    function setup() {
+        createPlayers();
+        createDeck();
+        shuffle();
+        deal();
+    }
+
+    function createPlayers() {
+        board.innerHTML = '';
+        for (let p = 0; p < numPlayers; p++) {
+            let row = document.createElement("tr");
+            let desc = document.createElement("td");
+            desc.innerHTML = "Player " + (p + 1);
+            let status = document.createElement("td");
+            let card = document.createElement("td");
+
+            row.appendChild(desc);
+            row.appendChild(status);
+            row.appendChild(card);
+
+            board.appendChild(row);
+
+            player.push({ name: (p + 1), deck: [], status: status, card: card });
+        }
+    }
+
+    function createDeck() {
+        for (let i = 2; i < 15; i++) {
+            for (let suit in suits) {
+                deck.push({ value: i, name: names[i - 2] + ' of ' + suits[suit] });
+            }
+        }
+
+        deck.push({ value: 15, name: 'Red Joker' });
+        deck.push({ value: 15, name: 'Black Joker' });
+    }
+
+    function shuffle() {
+        deck.sort(() => Math.random() - 0.5);
+    }
+
+    function deal() {
+        let currentPlayer = 0;
+        while (deck.length > 0) {
+            player[currentPlayer].deck.push(deck.pop());
+            currentPlayer = (currentPlayer + 1) % player.length;
+        }
+    }
+
+    function play() {
+        hands++;
+        let currentCards = getNextCard(player);
+        pot = [...currentCards];
+
+        for (let p = 0; p < numPlayers; p++) {
+            player[p].card.innerHTML = '';
+        }
+
+        message.innerHTML = hands + " hands: ";
+
+        let winningCards = getWinningCards(currentCards);
+
+        currentCards.forEach(c => c.player.card.innerHTML += '<p class="faceUp">' + c.name + '</p>');
+
+        while (winningCards.length > 1) {
+            message.innerHTML += "WAR!!<br>";
+            currentCards = war(winningCards.map(c => c.player));
+            pot.unshift(...currentCards);
+            winningCards = getWinningCards(currentCards);
+            currentCards.forEach(c => c.player.card.innerHTML += '<p class="faceUp">' + c.name + '</p>');
+        }
+
+        const winner = winningCards[0].player;
+        message.innerHTML += "Player " + (winner.name) + " wins";
+        winner.deck.unshift(...pot);
+
+        let playersOut = 0;
+        for (let p = 0; p < numPlayers; p++) {
+            player[p].status.innerHTML = player[p].deck.length + " cards left";
+
+            if (player[p].deck.length === 0) {
+                playersOut++;
+                player[p].card.innerHTML += "<p>OUT</p>";
+            }
+        }
+
+        if (playersOut === numPlayers - 1) {
+            document.getElementById("playButton").disabled = true;
+        }
+    }
+
+    function getWinningCards(cards) {
+        const max = cards.reduce((a, b) => ({ value: Math.max(a.value, b.value) })).value;
+        return cards.filter(card => card.value === max);
+    }
+
+    function war(players) {
+        const maxCards = cardsForWar(players);
+        for (let i = 0; i < maxCards - 1; i++) {
+            const currentCard = getNextCard(players);
+            for (let p = 0; p < players.length; p++) {
+                players[p].card.innerHTML += '<p class="faceDown">' + currentCard[p].name + '</p>';
+            }
+            pot.unshift(...currentCard);
+        }
+
+        return getNextCard(players);
+    }
+
+    function cardsForWar(players) {
+        return Math.min(4, players.reduce((a, b) => ({ deckLength: Math.min(a.deck.length, b.deck.length) })).deckLength);
+    }
+
+    function getNextCard(players) {
+        let cards = [];
+        for (let p = 0; p < players.length; p++) {
+            if (players[p].deck.length > 0) {
+                let card = players[p].deck.pop();
+                card.player = players[p];
+                cards.push(card);
+            }
+        }
+        return cards;
+    }
+
+    setup();
+
+</script>
+
+</html>
